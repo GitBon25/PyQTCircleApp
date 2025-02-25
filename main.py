@@ -1,14 +1,22 @@
 import sys
 import random
-from PyQt6 import uic
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton
 from PyQt6.QtGui import QPainter, QColor
 from PyQt6.QtCore import QPoint
 
-class CircleApp(QMainWindow):
+
+class Ui_MainWindow:
+    def setupUi(self, MainWindow):
+        MainWindow.setWindowTitle("Circle App")
+        MainWindow.resize(400, 300)
+        self.pushButton = QPushButton("Draw Circle", MainWindow)
+        self.pushButton.setGeometry(150, 120, 100, 30)
+
+
+class CircleApp(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('UI.ui', self)
+        self.setupUi(self)
         self.pushButton.clicked.connect(self.draw_circle)
         self.circles = []
 
@@ -16,15 +24,18 @@ class CircleApp(QMainWindow):
         diameter = random.randint(10, 100)
         x = random.randint(0, self.width() - diameter)
         y = random.randint(0, self.height() - diameter)
-        self.circles.append((x, y, diameter))
+        color = QColor(random.randint(0, 255), random.randint(
+            0, 255), random.randint(0, 255))
+        self.circles.append((x, y, diameter, color))
         self.update()
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        painter.setBrush(QColor(255, 255, 0))
         for circle in self.circles:
-            x, y, diameter = circle
+            x, y, diameter, color = circle
+            painter.setBrush(color)
             painter.drawEllipse(QPoint(x, y), diameter // 2, diameter // 2)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
